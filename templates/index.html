@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stock Tracker Dashboard</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+        }
+        
+        header h1 {
+            font-size: 3em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .status-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .status-label {
+            font-weight: 600;
+            color: #666;
+        }
+        
+        .status-value {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .refresh-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .refresh-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .refresh-btn:active {
+            transform: translateY(0);
+        }
+        
+        .websites-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .website-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .website-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+        
+        .website-card.has-changes {
+            border-left: 5px solid #10b981;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+            50% { box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); }
+        }
+        
+        .website-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+        }
+        
+        .website-name {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .status-badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+        
+        .status-badge.ok {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-badge.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .website-url {
+            color: #667eea;
+            font-size: 0.9em;
+            margin-bottom: 15px;
+            word-break: break-all;
+        }
+        
+        .website-url a {
+            color: inherit;
+            text-decoration: none;
+        }
+        
+        .website-url a:hover {
+            text-decoration: underline;
+        }
+        
+        .stat-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding: 10px;
+            background: #f9fafb;
+            border-radius: 8px;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            color: #333;
+            font-weight: bold;
+        }
+        
+        .changes-list {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e5e7eb;
+        }
+        
+        .change-item {
+            background: #fef3c7;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 0.9em;
+            color: #92400e;
+            font-weight: 500;
+        }
+        
+        .recent-changes {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        
+        .recent-changes h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8em;
+        }
+        
+        .change-entry {
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .change-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .change-site {
+            font-weight: bold;
+            color: #333;
+            font-size: 1.1em;
+        }
+        
+        .change-time {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .change-details {
+            color: #555;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: white;
+            font-size: 1.2em;
+        }
+        
+        .loading::after {
+            content: '...';
+            animation: dots 1.5s infinite;
+        }
+        
+        @keyframes dots {
+            0%, 20% { content: '.'; }
+            40% { content: '..'; }
+            60%, 100% { content: '...'; }
+        }
+        
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.1em;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            
+            .websites-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌿 Stock Tracker Dashboard</h1>
+            <p>Real-time monitoring of 5 hemp & cannabis product websites</p>
+        </header>
+        
+        <div class="status-bar">
+            <div class="status-item">
+                <span class="status-label">Last Check:</span>
+                <span class="status-value" id="lastCheck">Loading...</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Websites Tracked:</span>
+                <span class="status-value" id="websiteCount">5</span>
+            </div>
+            <div class="status-item">
+                <span class="status-label">Auto-refresh:</span>
+                <span class="status-value">Every 30 min</span>
+            </div>
+            <button class="refresh-btn" onclick="refreshNow()">🔄 Refresh Now</button>
+        </div>
+        
+        <div id="websitesGrid" class="websites-grid">
+            <div class="loading">Loading website data</div>
+        </div>
+        
+        <div class="recent-changes">
+            <h2>📊 Recent Changes</h2>
+            <div id="recentChanges">
+                <div class="no-data">No changes detected yet</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let isRefreshing = false;
+        
+        function formatDate(isoString) {
+            if (!isoString) return 'Never';
+            const date = new Date(isoString);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)} minutes ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)} hours ago`;
+            return date.toLocaleString();
+        }
+        
+        function updateDashboard() {
+            fetch('/api/status')
+                .then(response => response.json())
+                .then(data => {
+                    // Update last check time
+                    document.getElementById('lastCheck').textContent = formatDate(data.last_check);
+                    
+                    // Update websites grid
+                    const grid = document.getElementById('websitesGrid');
+                    const websites = Object.values(data.websites);
+                    
+                    if (websites.length === 0) {
+                        grid.innerHTML = '<div class="loading">Performing initial check</div>';
+                        return;
+                    }
+                    
+                    grid.innerHTML = websites.map(site => `
+                        <div class="website-card ${site.has_changes ? 'has-changes' : ''}">
+                            <div class="website-header">
+                                <div class="website-name">${site.name}</div>
+                                <div class="status-badge ${site.status}">${site.status === 'ok' ? '✓ Active' : '✗ Error'}</div>
+                            </div>
+                            <div class="website-url">
+                                <a href="${site.url}" target="_blank">${site.url}</a>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Products Found:</span>
+                                <span class="stat-value">${site.product_count || 0}</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">Last Checked:</span>
+                                <span class="stat-value">${formatDate(site.last_checked)}</span>
+                            </div>
+                            ${site.products && site.products.length > 0 ? `
+                                <div class="stat-row">
+                                    <span class="stat-label">Sample Products:</span>
+                                    <span class="stat-value">${site.products.slice(0, 3).length} shown</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+                    
+                    // Update recent changes
+                    const changesDiv = document.getElementById('recentChanges');
+                    if (data.recent_changes && data.recent_changes.length > 0) {
+                        changesDiv.innerHTML = data.recent_changes.slice(0, 10).map(change => `
+                            <div class="change-entry">
+                                <div class="change-header">
+                                    <div class="change-site">${change.name}</div>
+                                    <div class="change-time">${formatDate(change.timestamp)}</div>
+                                </div>
+                                <div class="change-details">
+                                    ${change.changes.map(c => `• ${c}`).join('<br>')}
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        changesDiv.innerHTML = '<div class="no-data">No changes detected yet</div>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching data:', error);
+                });
+        }
+        
+        function refreshNow() {
+            if (isRefreshing) return;
+            
+            isRefreshing = true;
+            const btn = document.querySelector('.refresh-btn');
+            btn.textContent = '⏳ Refreshing...';
+            btn.disabled = true;
+            
+            fetch('/api/refresh')
+                .then(() => {
+                    setTimeout(() => {
+                        updateDashboard();
+                        btn.textContent = '🔄 Refresh Now';
+                        btn.disabled = false;
+                        isRefreshing = false;
+                    }, 3000);
+                });
+        }
+        
+        // Update dashboard every 30 seconds
+        updateDashboard();
+        setInterval(updateDashboard, 30000);
+    </script>
+</body>
+</html>
